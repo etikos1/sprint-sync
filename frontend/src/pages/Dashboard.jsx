@@ -22,7 +22,6 @@ const Dashboard = () => {
     try {
       const response = await fetchTasks();
       setTasks(response.data.data);
-     
     } catch (error) {
       message.error('Failed to load tasks');
     }
@@ -33,21 +32,25 @@ const Dashboard = () => {
       await createTask(taskData);
       message.success('Task created successfully');
       setIsModalOpen(false);
+      setAiSuggestion('');
       loadTasks();
-     
     } catch (error) {
       message.error('Failed to create task');
     }
   };
 
-  const handleUpdateTask = async (id, taskData) => {
+  const handleUpdateTask = async (taskData) => {
     try {
-      await updateTask(id, taskData);
+      if (!editingTask || !editingTask.id) {
+        message.error('Cannot update task: No task ID found');
+        return;
+      }
+      
+      await updateTask(editingTask.id, taskData);
       message.success('Task updated successfully');
       setIsModalOpen(false);
       setEditingTask(null);
       loadTasks();
-     
     } catch (error) {
       message.error('Failed to update task');
     }
@@ -58,18 +61,19 @@ const Dashboard = () => {
       await deleteTask(id);
       message.success('Task deleted successfully');
       loadTasks();
-     
     } catch (error) {
       message.error('Failed to delete task');
     }
   };
-const handleSuggestionGenerated = (suggestion) => {
-    setAiSuggestion(suggestion);};
+
+  const handleSuggestionGenerated = (suggestion) => {
+    setAiSuggestion(suggestion);
+  };
+
   const handleStatusChange = async (taskId, newStatus) => {
     try {
       await updateTaskStatus(taskId, newStatus);
       loadTasks();
-     
     } catch (error) {
       message.error('Failed to update task status');
     }
@@ -77,13 +81,27 @@ const handleSuggestionGenerated = (suggestion) => {
 
   const showModal = (task = null) => {
     setEditingTask(task);
-
-    if (!task && aiSuggestion) 
-      
     setIsModalOpen(true);
   };
 
-    return (
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setEditingTask(null);
+    if (!editingTask) {
+      setAiSuggestion('');
+    }
+  };
+
+  // This function handles both create and update submissions
+  const handleFormSubmit = (taskData) => {
+    if (editingTask) {
+      handleUpdateTask(taskData);
+    } else {
+      handleCreateTask(taskData);
+    }
+  };
+
+  return (
     <div>
       <div style={{ marginBottom: 24, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
@@ -102,27 +120,20 @@ const handleSuggestionGenerated = (suggestion) => {
       />
 
       <Modal
-  title={editingTask ? 'Edit Task' : 'Create Task'}
-  open={isModalOpen}
-  onCancel={() => {
-    setIsModalOpen(false);
-    setEditingTask(null);
-    setAiSuggestion(''); // Clear suggestion when modal closes
-  }}
-  footer={null}
-  width={600}
->
-  <TaskForm
-    task={editingTask}
-    onSubmit={editingTask ? handleUpdateTask : handleCreateTask}
-    onCancel={() => {
-      setIsModalOpen(false);
-      setEditingTask(null);
-      setAiSuggestion(''); // Clear suggestion when modal closes
-    }}
-    aiSuggestion={!editingTask ? aiSuggestion : ''} // Only pass for new tasks
-  />
-</Modal>
+        title={editingTask ? `Edit Task: ${editingTask.title}` : 'Create New Task'}
+        open={isModalOpen}
+        onCancel={handleModalClose}
+        footer={null}
+        width={600}
+        destroyOnClose
+      >
+        <TaskForm
+          task={editingTask}
+          onSubmit={handleFormSubmit}
+          onCancel={handleModalClose}
+          aiSuggestion={!editingTask ? aiSuggestion : ''}
+        />
+      </Modal>
     </div>
   );
 };

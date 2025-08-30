@@ -27,6 +27,7 @@ const TaskForm = ({ task, onSubmit, onCancel, aiSuggestion }) => {
       } else {
         await onSubmit(values);
       }
+      await onSubmit(values);
     } finally {
       setLoading(false);
     }
