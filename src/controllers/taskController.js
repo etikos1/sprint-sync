@@ -68,8 +68,9 @@ export const createTask = async (req, res) => {
 // @access  Private
 export const updateTask = async (req, res) => {
   try {
-    const { title, description, status, totalMinutes } = req.body;
     const taskId = parseInt(req.params.id);
+
+    const { title, description, status, totalMinutes } = req.body || {};
 
     // First, verify the task belongs to the user
     const existingTask = await prisma.task.findFirst({
@@ -80,9 +81,19 @@ export const updateTask = async (req, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
+    const data = {};
+    if (title !== undefined) data.title = title;
+    if (description !== undefined) data.description = description;
+    if (status !== undefined) data.status = status;
+    if (totalMinutes !== undefined) data.totalMinutes = totalMinutes;
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'No valid fields provided for update' });
+    }
+
     const updatedTask = await prisma.task.update({
       where: { id: taskId },
-      data: { title, description, status, totalMinutes },
+      data,
     });
 
     res.json({ message: 'Task updated successfully', data: updatedTask });
