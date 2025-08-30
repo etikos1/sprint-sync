@@ -20,18 +20,14 @@ const TaskForm = ({ task, onSubmit, onCancel, aiSuggestion }) => {
   }, [task, aiSuggestion, form]);
 
   const handleSubmit = async (values) => {
-    setLoading(true);
-    try {
-      if (task) {
-        await onSubmit(task.id, values);
-      } else {
-        await onSubmit(values);
-      }
-      await onSubmit(values);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    await onSubmit(values); // always pass values only
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Form form={form} layout="vertical" onFinish={handleSubmit}>

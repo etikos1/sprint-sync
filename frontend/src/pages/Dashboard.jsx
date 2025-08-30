@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   const handleCreateTask = async (taskData) => {
     try {
-      await createTask(taskData);
+      await createTask(taskData); // Only call once
       message.success('Task created successfully');
       setIsModalOpen(false);
       setAiSuggestion('');
@@ -39,14 +39,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleUpdateTask = async (taskData) => {
+  const handleUpdateTask = async (id, taskData) => {
     try {
-      if (!editingTask || !editingTask.id) {
-        message.error('Cannot update task: No task ID found');
-        return;
-      }
-      
-      await updateTask(editingTask.id, taskData);
+      await updateTask(id, taskData); // Only call once
       message.success('Task updated successfully');
       setIsModalOpen(false);
       setEditingTask(null);
@@ -92,12 +87,12 @@ const Dashboard = () => {
     }
   };
 
-  // This function handles both create and update submissions
-  const handleFormSubmit = (taskData) => {
+  // Handle both create and update 
+  const handleFormSubmit = async (idOrValues, maybeValues) => {
     if (editingTask) {
-      handleUpdateTask(taskData);
+      await handleUpdateTask(editingTask.id, idOrValues); // pass values for update
     } else {
-      handleCreateTask(taskData);
+      await handleCreateTask(idOrValues); // pass values for create
     }
   };
 
