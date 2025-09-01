@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend  
+    ports:
+      - "5000:5000"
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - JWT_SECRET="0yobzMytl8LJa1ru4jFgww==sww4E1YFzAMCwiFyFDiN0hCxnav9DffHSCwQqygK"
+      - DATABASE_URL=file:/app/prisma/dev.db
+      - OPENAI_API_KEY="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"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - backend_data:/app/prisma
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  frontend:
+    build: ./frontend  
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  backend_data:

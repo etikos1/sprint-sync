@@ -1,6 +1,8 @@
 SprintSync - AI-Powered Task Management System
 SprintSync is an internal task management tool for AI consultancy teams, featuring AI-powered task suggestions and time tracking.
 
+Loom video recording link: https://www.loom.com/share/7416e022ec684bc3b7fcab71ded1e013?sid=531b0349-92e1-4e75-a859-6eba1ed93a1c
+
 Features:
 *Task Management: Kanban board with drag-and-drop functionality
 

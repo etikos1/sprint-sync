@@ -1,0 +1,29 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "docker:build": "docker build -t sprintsync-backend .",
+    "docker:run": "docker run -p 5000:5000 sprintsync-backend",
+    "db:migrate": "npx prisma migrate deploy",
+    "db:generate": "npx prisma generate",
+    "db:studio": "npx prisma studio"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@prisma/client": "^5.16.1",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "morgan": "^1.10.0",
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^5.16.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^5.16.1"
+  }
+}
